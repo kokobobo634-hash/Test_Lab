@@ -145,8 +145,8 @@ def upload():
         f = request.files.get("file")
         if f and f.filename:
             filename = f.filename
-            # 소문자 변환 후 확장자만 체크 → 대소문자 혼용(.PHP, .PhP) 또는 .phtml 등으로 우회
-            ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+            # 소문자 변환 없이 확장자 그대로 체크 → .PHP, .PhP, .phtml 등으로 우회 가능
+            ext = filename.rsplit(".", 1)[-1] if "." in filename else ""
             if ext in BLACKLIST_EXT:
                 message = f"❌ 차단된 확장자: .{ext}"
             else:
