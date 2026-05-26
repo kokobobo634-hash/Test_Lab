@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}파일 다운로드 - VulnLab{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>파일 다운로드</h2>
+  <div class="vuln-info">
+    <b>[취약점 4-B] Path Traversal</b><br>
+    <code>../</code> 를 한 번만 제거 → <code>....//</code> 로 우회<br>
+    예시: <code>....//....//....//etc/passwd</code>
+  </div>
+
+  <form method="GET" action="/download">
+    <div class="form-row">
+      <input type="text" name="file" value="{{ filename }}" placeholder="파일명 (예: readme.txt)" style="flex:1">
+      <button type="submit" class="btn btn-primary">조회</button>
+    </div>
+  </form>
+
+  {% if filename %}
+    <p class="muted">요청: <code>{{ filename }}</code> → 필터 후: <code>{{ filtered }}</code></p>
+  {% endif %}
+
+  {% if error %}
+    <div class="msg error">{{ error }}</div>
+  {% endif %}
+
+  {% if content %}
+    <div class="terminal">{{ content }}</div>
+  {% endif %}
+
+  <h3>업로드된 파일 목록</h3>
+  {% if files %}
+    <ul class="file-list">
+      {% for f in files %}
+        <li><a href="/download?file={{ f }}">{{ f }}</a></li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</div>
+{% endblock %}

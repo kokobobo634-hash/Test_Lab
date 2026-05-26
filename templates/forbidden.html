@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}접근 거부 - VulnLab{% endblock %}
+{% block content %}
+<div class="card center-card">
+  <h2>🚫 접근 거부 (403)</h2>
+  <p>현재 역할: <span class="badge badge-user">{{ role }}</span></p>
+
+  <div class="vuln-info">
+    <b>[취약점 6] 권한 상승 도전!</b><br>
+    브라우저 개발자 도구(F12) → Application → Cookies<br>
+    <code>role</code> 쿠키 값을 <code>user</code> → <code>admin</code> 으로 변경 후 새로고침
+  </div>
+
+  <a href="/dashboard" class="btn btn-secondary">← 대시보드로</a>
+</div>
+{% endblock %}

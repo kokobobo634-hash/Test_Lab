@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}SQL Injection - VulnLab{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>사용자 검색</h2>
+  <div class="vuln-info">
+    <b>[취약점 2] SQL Injection</b><br>
+    공백(" ")은 필터링됨 → <code>/**/ </code>로 대체하여 우회<br>
+    예시: <code>' UNION/**/SELECT/**/1,label,value/**/FROM/**/secrets-- -</code>
+  </div>
+
+  <form method="GET" action="/search">
+    <div class="form-row">
+      <input type="text" name="q" value="{{ query }}" placeholder="검색할 사용자명" style="flex:1">
+      <button type="submit" class="btn btn-primary">검색</button>
+    </div>
+  </form>
+
+  {% if error %}
+    <div class="msg error">SQL 오류: {{ error }}</div>
+  {% endif %}
+
+  {% if results %}
+    <table class="data-table">
+      <thead><tr><th>ID</th><th>Username</th><th>Email</th></tr></thead>
+      <tbody>
+        {% for row in results %}
+        <tr><td>{{ row[0] }}</td><td>{{ row[1] }}</td><td>{{ row[2] }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% elif query and not error %}
+    <p class="muted">검색 결과 없음</p>
+  {% endif %}
+</div>
+{% endblock %}

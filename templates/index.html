@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}로그인 - VulnLab{% endblock %}
+{% block content %}
+<div class="card center-card">
+  <h2>로그인</h2>
+  <p class="hint">💡 <b>[취약점 1]</b> 응답 패킷의 <code>status</code> 값을 <code>success</code>로 변조하면 인증 우회 가능</p>
+
+  <form id="loginForm">
+    <div class="form-group">
+      <label>아이디</label>
+      <input type="text" id="username" placeholder="username" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>비밀번호</label>
+      <input type="password" id="password" placeholder="password">
+    </div>
+    <button type="submit" class="btn btn-primary">로그인</button>
+  </form>
+  <div id="loginMsg" class="msg"></div>
+
+  <div class="info-box">
+    <b>테스트 계정</b><br>
+    admin / Admin@1234 &nbsp;|&nbsp; alice / alice_pw! &nbsp;|&nbsp; bob / bob_pw!
+  </div>
+</div>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  const msg = document.getElementById('loginMsg');
+
+  const res = await fetch('/api/login', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({username, password})
+  });
+  const data = await res.json();
+
+  // ★ 클라이언트가 status 값만 믿고 인증 처리
+  if (data.status === 'success') {
+    msg.className = 'msg success';
+    msg.textContent = `✅ 로그인 성공 (${data.username})`;
+    setTimeout(() => {
+      location.href = `/set_cookie?username=${data.username || username}`;
+    }, 800);
+  } else {
+    msg.className = 'msg error';
+    msg.textContent = `❌ ${data.message}`;
+  }
+});
+</script>
+{% endblock %}

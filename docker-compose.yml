@@ -1,0 +1,14 @@
+services:
+  vulnlab:
+    build: .
+    container_name: vulnlab
+    ports:
+      - "5000:5000"
+    volumes:
+      - vulnlab_data:/app/data
+      - vulnlab_uploads:/app/uploads
+    restart: unless-stopped
+
+volumes:
+  vulnlab_data:
+  vulnlab_uploads:

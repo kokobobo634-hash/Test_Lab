@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Command Injection - VulnLab{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>Ping 테스트</h2>
+  <div class="vuln-info">
+    <b>[취약점 3] Command Injection</b><br>
+    <code>;</code> 와 <code>&amp;</code> 는 필터링됨 → <code>|</code> 파이프로 우회<br>
+    예시: <code>127.0.0.1 | id</code> &nbsp; 또는 &nbsp; <code>127.0.0.1 | cat /etc/passwd</code>
+  </div>
+
+  <form method="POST" action="/ping">
+    <div class="form-row">
+      <input type="text" name="target" value="{{ target }}" placeholder="IP 또는 도메인 (예: 127.0.0.1)" style="flex:1">
+      <button type="submit" class="btn btn-primary">Ping</button>
+    </div>
+  </form>
+
+  {% if output %}
+    <div class="terminal">{{ output }}</div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}대시보드 - VulnLab{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>대시보드</h2>
+  <p>안녕하세요, <b>{{ username }}</b>님</p>
+  <p>현재 역할: <span class="badge {% if role == 'admin' %}badge-admin{% else %}badge-user{% endif %}">{{ role }}</span></p>
+
+  <div class="vuln-grid">
+    <a href="/search" class="vuln-card">
+      <div class="vuln-num">02</div>
+      <div class="vuln-title">SQL Injection</div>
+      <div class="vuln-desc">공백 필터 우회 후 UNION으로 데이터 탈취</div>
+    </a>
+    <a href="/ping" class="vuln-card">
+      <div class="vuln-num">03</div>
+      <div class="vuln-title">Command Injection</div>
+      <div class="vuln-desc">; & 차단 환경에서 | 로 임의 명령 실행</div>
+    </a>
+    <a href="/upload" class="vuln-card">
+      <div class="vuln-num">04A</div>
+      <div class="vuln-title">파일 업로드</div>
+      <div class="vuln-desc">블랙리스트 우회로 웹쉘 업로드</div>
+    </a>
+    <a href="/download" class="vuln-card">
+      <div class="vuln-num">04B</div>
+      <div class="vuln-title">Path Traversal</div>
+      <div class="vuln-desc">....// 중첩으로 상위 디렉토리 파일 접근</div>
+    </a>
+    <a href="/mypage?user_id=2" class="vuln-card">
+      <div class="vuln-num">05</div>
+      <div class="vuln-title">IDOR</div>
+      <div class="vuln-desc">user_id 파라미터 변조로 타인 정보 열람</div>
+    </a>
+    <a href="/admin" class="vuln-card">
+      <div class="vuln-num">06</div>
+      <div class="vuln-title">권한 상승</div>
+      <div class="vuln-desc">role 쿠키를 admin으로 변조하여 관리자 접근</div>
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,180 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #0f1117;
+  color: #e2e8f0;
+  min-height: 100vh;
+}
+
+/* ── Navbar ── */
+.navbar {
+  background: #1a1d2e;
+  border-bottom: 1px solid #2d3148;
+  padding: .75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.nav-brand { font-size: 1.1rem; font-weight: 700; color: #7c83f5; }
+.nav-links { display: flex; gap: .25rem; flex-wrap: wrap; }
+.nav-links a {
+  color: #94a3b8;
+  text-decoration: none;
+  padding: .35rem .75rem;
+  border-radius: 6px;
+  font-size: .85rem;
+  transition: background .15s, color .15s;
+}
+.nav-links a:hover { background: #2d3148; color: #e2e8f0; }
+
+/* ── Container ── */
+.container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+
+/* ── Card ── */
+.card {
+  background: #1a1d2e;
+  border: 1px solid #2d3148;
+  border-radius: 12px;
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+.center-card { max-width: 480px; margin: 3rem auto; }
+.card h2 { font-size: 1.4rem; margin-bottom: 1.25rem; color: #c7d2fe; }
+.card h3 { font-size: 1rem; margin: 1.25rem 0 .75rem; color: #94a3b8; }
+
+/* ── Vuln info box ── */
+.vuln-info {
+  background: #12151f;
+  border-left: 3px solid #7c83f5;
+  border-radius: 6px;
+  padding: .85rem 1rem;
+  margin-bottom: 1.25rem;
+  font-size: .88rem;
+  line-height: 1.7;
+  color: #94a3b8;
+}
+.vuln-info b { color: #a5b4fc; }
+.vuln-info code { background: #1e2235; padding: 1px 5px; border-radius: 4px; color: #fbbf24; font-size: .85em; }
+
+/* ── Forms ── */
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; margin-bottom: .4rem; font-size: .88rem; color: #94a3b8; }
+.form-row { display: flex; gap: .5rem; align-items: center; margin-bottom: 1rem; }
+input[type="text"], input[type="password"], input[type="file"] {
+  background: #12151f;
+  border: 1px solid #2d3148;
+  border-radius: 8px;
+  color: #e2e8f0;
+  padding: .6rem .9rem;
+  font-size: .9rem;
+  width: 100%;
+  outline: none;
+  transition: border-color .15s;
+}
+input:focus { border-color: #7c83f5; }
+
+/* ── Buttons ── */
+.btn {
+  padding: .55rem 1.2rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: .88rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  transition: opacity .15s;
+}
+.btn:hover { opacity: .85; }
+.btn-primary  { background: #7c83f5; color: #fff; }
+.btn-secondary { background: #2d3148; color: #94a3b8; }
+
+/* ── Messages ── */
+.msg { padding: .65rem 1rem; border-radius: 8px; margin-top: 1rem; font-size: .9rem; }
+.msg.success { background: #052e16; border: 1px solid #166534; color: #86efac; }
+.msg.error   { background: #2d0a0a; border: 1px solid #7f1d1d; color: #fca5a5; }
+
+/* ── Terminal output ── */
+.terminal {
+  background: #050708;
+  border: 1px solid #1e2235;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  font-family: 'Courier New', monospace;
+  font-size: .82rem;
+  color: #a3e635;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+/* ── Tables ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin-top: .5rem;
+}
+.data-table th, .data-table td {
+  padding: .6rem .9rem;
+  border-bottom: 1px solid #2d3148;
+  text-align: left;
+}
+.data-table th { color: #94a3b8; font-weight: 600; background: #12151f; }
+.data-table tr:hover td { background: #12151f; }
+
+/* ── Badges ── */
+.badge {
+  display: inline-block;
+  padding: .2rem .6rem;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 700;
+}
+.badge-admin { background: #7c83f5; color: #fff; }
+.badge-user  { background: #2d3148; color: #94a3b8; }
+
+/* ── Vuln grid ── */
+.vuln-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.vuln-card {
+  background: #12151f;
+  border: 1px solid #2d3148;
+  border-radius: 10px;
+  padding: 1.1rem;
+  text-decoration: none;
+  transition: border-color .15s, transform .1s;
+  display: block;
+}
+.vuln-card:hover { border-color: #7c83f5; transform: translateY(-2px); }
+.vuln-num   { font-size: .75rem; color: #7c83f5; font-weight: 700; margin-bottom: .3rem; }
+.vuln-title { font-size: .95rem; color: #c7d2fe; font-weight: 600; margin-bottom: .3rem; }
+.vuln-desc  { font-size: .82rem; color: #64748b; }
+
+/* ── File list ── */
+.file-list { list-style: none; }
+.file-list li { padding: .4rem 0; border-bottom: 1px solid #2d3148; }
+.file-list a { color: #7c83f5; text-decoration: none; font-size: .9rem; }
+.file-list a:hover { text-decoration: underline; }
+
+/* ── Hint / muted ── */
+.hint { font-size: .85rem; color: #64748b; margin-bottom: 1.25rem; }
+.hint code { background: #1e2235; padding: 1px 5px; border-radius: 4px; color: #fbbf24; }
+.muted { color: #475569; font-size: .88rem; margin-top: .75rem; }
+.info-box {
+  background: #12151f;
+  border: 1px solid #2d3148;
+  border-radius: 8px;
+  padding: .85rem 1rem;
+  margin-top: 1.25rem;
+  font-size: .85rem;
+  color: #64748b;
+}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}파일 업로드 - VulnLab{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>파일 업로드</h2>
+  <div class="vuln-info">
+    <b>[취약점 4-A] 파일 업로드 (블랙리스트 우회)</b><br>
+    차단 확장자: <code>php jsp asp aspx sh py rb pl</code> (소문자만 비교)<br>
+    우회: <code>.PHP</code> <code>.PhP</code> <code>.phtml</code> <code>.php5</code> 등 대소문자 혼용
+  </div>
+
+  <form method="POST" action="/upload" enctype="multipart/form-data">
+    <div class="form-group">
+      <label>업로드할 파일 선택</label>
+      <input type="file" name="file">
+    </div>
+    <button type="submit" class="btn btn-primary">업로드</button>
+  </form>
+
+  {% if message %}
+    <div class="msg {% if '성공' in message %}success{% else %}error{% endif %}">{{ message }}</div>
+  {% endif %}
+
+  <h3>업로드된 파일 목록</h3>
+  {% if files %}
+    <ul class="file-list">
+      {% for f in files %}
+        <li><a href="/download?file={{ f }}">{{ f }}</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="muted">업로드된 파일 없음</p>
+  {% endif %}
+</div>
+{% endblock %}

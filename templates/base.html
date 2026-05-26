@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}VulnLab{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <span class="nav-brand">🔐 VulnLab</span>
+    <div class="nav-links">
+      <a href="/dashboard">대시보드</a>
+      <a href="/search">SQL Injection</a>
+      <a href="/ping">CMD Injection</a>
+      <a href="/upload">파일 업로드</a>
+      <a href="/download">파일 다운로드</a>
+      <a href="/mypage?user_id=2">마이페이지</a>
+      <a href="/admin">관리자</a>
+    </div>
+  </nav>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
