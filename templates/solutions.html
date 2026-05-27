@@ -7,9 +7,7 @@
 
   <div class="hint-status-grid" id="hintStatusGrid"></div>
 
-  <div style="margin-top:1.5rem; text-align:right">
-    <button class="btn btn-secondary" onclick="resetHints()" style="font-size:0.85rem">기록 초기화</button>
-  </div>
+  <p class="muted" style="margin-top:1.5rem; font-size:0.82rem">* 힌트 기록은 서버(Docker) 재시작 시 자동으로 초기화됩니다.</p>
 </div>
 
 <script>
@@ -37,12 +35,6 @@ function renderStatus() {
   }).join('');
 }
 
-function resetHints() {
-  if (confirm('힌트 사용 기록을 초기화하시겠습니까?')) {
-    localStorage.removeItem('hintUsed');
-    renderStatus();
-  }
-}
 
 renderStatus();
 </script>

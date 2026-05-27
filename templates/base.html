@@ -17,7 +17,16 @@
     document.querySelector('#hint-' + vulnKey + ' .hint-btn').classList.add('hint-used');
   }
 
-  // on page load, restore hint button state
+  // 컨테이너 재시작 감지 → hintUsed 자동 초기화
+  (function() {
+    const serverBoot = "{{ boot_token }}";
+    if (localStorage.getItem('bootToken') !== serverBoot) {
+      localStorage.removeItem('hintUsed');
+      localStorage.setItem('bootToken', serverBoot);
+    }
+  })();
+
+  // 페이지 로드 시 힌트 버튼 상태 복원
   document.addEventListener('DOMContentLoaded', function() {
     const used = JSON.parse(localStorage.getItem('hintUsed') || '{}');
     Object.keys(used).forEach(function(key) {

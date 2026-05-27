@@ -2,12 +2,19 @@ import os
 import sqlite3
 import subprocess
 import urllib.parse
+import uuid
+
+BOOT_TOKEN = str(uuid.uuid4())[:12]  # 컨테이너 재시작마다 새로 생성
 
 from flask import (Flask, jsonify, make_response, redirect, render_template,
                    request, send_file, url_for)
 
 app = Flask(__name__)
 app.secret_key = "super_secret_key_1234"
+
+@app.context_processor
+def inject_boot_token():
+    return {"boot_token": BOOT_TOKEN}
 
 DB_PATH = "/app/data/test.db"
 UPLOAD_DIR = "/app/uploads"
