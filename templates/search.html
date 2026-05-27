@@ -7,8 +7,9 @@
   <div class="hint-box" id="hint-sqli">
     <button class="hint-btn" onclick="useHint('sqli')">💡 힌트</button>
     <div class="hint-content hidden" id="hint-content-sqli">
-      <p><b>기본 페이로드:</b> <code>' OR 1=1--</code></p>
-      <p class="hint-note">이 페이로드는 그대로 동작하지 않습니다. 필터를 분석하고 우회 방법을 찾아보세요.</p>
+      <p><b>목표 페이로드:</b></p>
+      <code style="display:block; padding:0.5rem; background:#1e1e2e; border-radius:4px; font-size:0.85rem">UNION SELECT id,username,password FROM users</code>
+      <p class="hint-note" style="margin-top:0.6rem">위 구문을 SQL에 삽입하세요. 인젝션 문자(<code>'</code>)와 주석(<code>--</code> 또는 <code>/**/</code>)을 적절히 조합하면 됩니다.</p>
     </div>
   </div>
 

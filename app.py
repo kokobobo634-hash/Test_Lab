@@ -97,7 +97,7 @@ def dashboard():
     return render_template("dashboard.html", role=role, username=username)
 
 
-# ── [취약점 2] SQL Injection (공백 필터) ─────────────────────────────────────
+# ── [취약점 2] SQL Injection ──────────────────────────────────────────────────
 @app.route("/search")
 def search():
     query = request.args.get("q", "")
@@ -111,8 +111,7 @@ def search():
         "SELECT id, username, email FROM users WHERE role='user'"
     ).fetchall()
 
-    # 공백만 제거 → /**/로 우회 가능
-    filtered = query.replace(" ", "")
+    filtered = query  # 필터 없음 — ', --, /**/ 등 다양한 방식으로 우회 가능
 
     if filtered:
         try:
