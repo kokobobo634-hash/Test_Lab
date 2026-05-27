@@ -15,7 +15,7 @@
     <a href="/ping" class="vuln-card">
       <div class="vuln-num">03</div>
       <div class="vuln-title">Command Injection</div>
-      <div class="vuln-desc">; & 차단 환경에서 | 로 임의 명령 실행</div>
+      <div class="vuln-desc">; &amp; 차단 환경에서 | 로 임의 명령 실행</div>
     </a>
     <a href="/upload" class="vuln-card">
       <div class="vuln-num">04A</div>
@@ -39,4 +39,32 @@
     </a>
   </div>
 </div>
+
+<div class="card">
+  <h2>힌트 사용 현황</h2>
+  <p class="muted" style="margin-bottom:.75rem">힌트를 클릭한 항목은 노란색으로 표시됩니다.</p>
+  <div class="hint-status-grid" id="hintStatusGrid"></div>
+</div>
+
+<script>
+(function() {
+  const vulns = [
+    { key: 'sqli',     label: 'SQL Injection' },
+    { key: 'cmdi',     label: 'Command Injection' },
+    { key: 'upload',   label: '파일 업로드' },
+    { key: 'traversal',label: 'Path Traversal' },
+    { key: 'idor',     label: 'IDOR' },
+    { key: 'cookie',   label: '권한 상승 (Cookie)' }
+  ];
+  const used = JSON.parse(localStorage.getItem('hintUsed') || '{}');
+  const grid = document.getElementById('hintStatusGrid');
+  vulns.forEach(function(v) {
+    const div = document.createElement('div');
+    const isUsed = !!used[v.key];
+    div.className = 'hint-status-item ' + (isUsed ? 'used' : 'not-used');
+    div.textContent = (isUsed ? '🟡 ' : '🟢 ') + v.label;
+    grid.appendChild(div);
+  });
+})();
+</script>
 {% endblock %}

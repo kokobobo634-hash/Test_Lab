@@ -5,6 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}VulnLab{% endblock %}</title>
   <link rel="stylesheet" href="/static/style.css">
+  <script>
+  function useHint(vulnKey) {
+    const content = document.getElementById('hint-content-' + vulnKey);
+    content.classList.toggle('hidden');
+    // track
+    const used = JSON.parse(localStorage.getItem('hintUsed') || '{}');
+    used[vulnKey] = true;
+    localStorage.setItem('hintUsed', JSON.stringify(used));
+    // update button style
+    document.querySelector('#hint-' + vulnKey + ' .hint-btn').classList.add('hint-used');
+  }
+
+  // on page load, restore hint button state
+  document.addEventListener('DOMContentLoaded', function() {
+    const used = JSON.parse(localStorage.getItem('hintUsed') || '{}');
+    Object.keys(used).forEach(function(key) {
+      const btn = document.querySelector('#hint-' + key + ' .hint-btn');
+      if (btn) btn.classList.add('hint-used');
+    });
+  });
+  </script>
 </head>
 <body>
   <nav class="navbar">
@@ -17,6 +38,7 @@
       <a href="/download">파일 다운로드</a>
       <a href="/mypage?user_id=2">마이페이지</a>
       <a href="/admin">관리자</a>
+      <a href="/solutions">정답지</a>
     </div>
   </nav>
   <main class="container">

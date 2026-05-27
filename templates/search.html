@@ -3,10 +3,13 @@
 {% block content %}
 <div class="card">
   <h2>사용자 검색</h2>
-  <div class="vuln-info">
-    <b>[취약점 2] SQL Injection</b><br>
-    공백(" ")은 필터링됨 → <code>/**/ </code>로 대체하여 우회<br>
-    예시: <code>' UNION/**/SELECT/**/1,label,value/**/FROM/**/secrets-- -</code>
+
+  <div class="hint-box" id="hint-sqli">
+    <button class="hint-btn" onclick="useHint('sqli')">💡 힌트</button>
+    <div class="hint-content hidden" id="hint-content-sqli">
+      <p><b>기본 페이로드:</b> <code>' OR 1=1--</code></p>
+      <p class="hint-note">이 페이로드는 그대로 동작하지 않습니다. 필터를 분석하고 우회 방법을 찾아보세요.</p>
+    </div>
   </div>
 
   <form method="GET" action="/search">

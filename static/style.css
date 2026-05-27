@@ -178,3 +178,59 @@ input:focus { border-color: #7c83f5; }
   font-size: .85rem;
   color: #64748b;
 }
+
+/* ── Hint box ── */
+.hint-box { margin: 1rem 0; }
+.hint-btn { background: #f0a500; color: #000; border: none; padding: 0.4rem 1rem; border-radius: 4px; cursor: pointer; font-size: 0.9rem; }
+.hint-btn.hint-used { background: #aaa; }
+.hint-content { background: #fffbe6; border-left: 3px solid #f0a500; padding: 0.8rem 1rem; margin-top: 0.5rem; border-radius: 0 4px 4px 0; color: #1a1a1a; }
+.hint-content.hidden { display: none; }
+.hint-note { color: #666; font-size: 0.85rem; margin-top: 0.4rem; }
+
+/* ── Solutions page ── */
+.solution-card {
+  background: #12151f;
+  border: 1px solid #2d3148;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.solution-card h3 { color: #7c83f5; margin-bottom: .75rem; font-size: 1rem; }
+.solution-card .payload {
+  background: #050708;
+  border: 1px solid #1e2235;
+  border-radius: 6px;
+  padding: .6rem .9rem;
+  font-family: 'Courier New', monospace;
+  font-size: .82rem;
+  color: #a3e635;
+  word-break: break-all;
+  margin: .5rem 0;
+}
+.solution-card .flag {
+  display: inline-block;
+  background: #052e16;
+  border: 1px solid #166534;
+  color: #86efac;
+  border-radius: 6px;
+  padding: .3rem .75rem;
+  font-size: .85rem;
+  margin-top: .5rem;
+}
+.solution-meta { font-size: .85rem; color: #64748b; margin-bottom: .4rem; }
+
+/* ── Hint usage status ── */
+.hint-status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: .75rem;
+  margin-top: .75rem;
+}
+.hint-status-item {
+  border-radius: 8px;
+  padding: .6rem .9rem;
+  font-size: .85rem;
+  font-weight: 600;
+}
+.hint-status-item.not-used { background: #052e16; border: 1px solid #166534; color: #86efac; }
+.hint-status-item.used     { background: #3a2700; border: 1px solid #92400e; color: #fcd34d; }

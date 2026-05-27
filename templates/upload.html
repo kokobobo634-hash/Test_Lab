@@ -3,10 +3,13 @@
 {% block content %}
 <div class="card">
   <h2>파일 업로드</h2>
-  <div class="vuln-info">
-    <b>[취약점 4-A] 파일 업로드 (블랙리스트 우회)</b><br>
-    차단 확장자: <code>php jsp asp aspx sh py rb pl</code> (소문자만 비교)<br>
-    우회: <code>.PHP</code> <code>.PhP</code> <code>.phtml</code> <code>.php5</code> 등 대소문자 혼용
+
+  <div class="hint-box" id="hint-upload">
+    <button class="hint-btn" onclick="useHint('upload')">💡 힌트</button>
+    <div class="hint-content hidden" id="hint-content-upload">
+      <p><b>기본 페이로드:</b> <code>webshell.php</code></p>
+      <p class="hint-note">이 페이로드는 그대로 동작하지 않습니다. 필터를 분석하고 우회 방법을 찾아보세요.</p>
+    </div>
   </div>
 
   <form method="POST" action="/upload" enctype="multipart/form-data">

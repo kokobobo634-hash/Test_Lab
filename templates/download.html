@@ -3,10 +3,13 @@
 {% block content %}
 <div class="card">
   <h2>파일 다운로드</h2>
-  <div class="vuln-info">
-    <b>[취약점 4-B] Path Traversal</b><br>
-    <code>../</code> 를 한 번만 제거 → <code>....//</code> 로 우회<br>
-    예시: <code>....//....//....//etc/passwd</code>
+
+  <div class="hint-box" id="hint-traversal">
+    <button class="hint-btn" onclick="useHint('traversal')">💡 힌트</button>
+    <div class="hint-content hidden" id="hint-content-traversal">
+      <p><b>기본 페이로드:</b> <code>../etc/passwd</code></p>
+      <p class="hint-note">이 페이로드는 그대로 동작하지 않습니다. 필터를 분석하고 우회 방법을 찾아보세요.</p>
+    </div>
   </div>
 
   <form method="GET" action="/download">

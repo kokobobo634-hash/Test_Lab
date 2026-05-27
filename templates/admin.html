@@ -3,9 +3,13 @@
 {% block content %}
 <div class="card">
   <h2>🔑 관리자 패널</h2>
-  <div class="vuln-info">
-    <b>[취약점 6] 권한 상승 성공!</b><br>
-    <code>role</code> 쿠키를 <code>admin</code>으로 변조하여 접근 성공
+
+  <div class="hint-box" id="hint-cookie">
+    <button class="hint-btn" onclick="useHint('cookie')">💡 힌트</button>
+    <div class="hint-content hidden" id="hint-content-cookie">
+      <p><b>기본 페이로드:</b> <code>role=user</code></p>
+      <p class="hint-note">이 페이로드는 그대로 동작하지 않습니다. 필터를 분석하고 우회 방법을 찾아보세요.</p>
+    </div>
   </div>
 
   <h3>전체 사용자 목록</h3>

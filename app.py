@@ -10,6 +10,7 @@ app.secret_key = "super_secret_key_1234"
 
 DB_PATH = "/app/data/test.db"
 UPLOAD_DIR = "/app/uploads"
+SECRET_FILE = "/app/data/secret.txt"
 
 # ── DB 초기화 ──────────────────────────────────────────────────────────────────
 def get_db():
@@ -33,7 +34,7 @@ def init_db():
             role     TEXT DEFAULT 'user'
         );
         INSERT OR IGNORE INTO users VALUES
-            (1,'admin','Admin@1234','admin@testlab.local','010-0000-0001','admin'),
+            (1,'admin_PB','PBKOR!@','admin@testlab.local','010-0000-0001','admin'),
             (2,'alice','alice_pw!','alice@testlab.local','010-1111-2222','user'),
             (3,'bob',  'bob_pw!',  'bob@testlab.local',  '010-3333-4444','user'),
             (4,'carol','carol_pw!','carol@testlab.local','010-5555-6666','user');
@@ -50,6 +51,12 @@ def init_db():
     """)
     conn.commit()
     conn.close()
+
+    # secret.txt 생성 (Path Traversal / Command Injection 목표 파일)
+    os.makedirs(os.path.dirname(SECRET_FILE), exist_ok=True)
+    if not os.path.exists(SECRET_FILE):
+        with open(SECRET_FILE, "w") as f:
+            f.write("=== 관리자 크리덴셜 ===\nID: admin_PB\nPW: PBKOR!@\n")
 
     # 다운로드 취약점 테스트용 샘플 파일
     sample = os.path.join(UPLOAD_DIR, "readme.txt")
@@ -203,6 +210,15 @@ def admin():
     users = conn.execute("SELECT id, username, email, role FROM users").fetchall()
     conn.close()
     return render_template("admin.html", users=users)
+
+
+# ── 정답지 (admin 전용) ────────────────────────────────────────────────────────
+@app.route("/solutions")
+def solutions():
+    role = request.cookies.get("role", "user")
+    if role != "admin":
+        return render_template("forbidden.html", role=role), 403
+    return render_template("solutions.html")
 
 
 @app.route("/set_cookie")

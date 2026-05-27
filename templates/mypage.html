@@ -3,10 +3,13 @@
 {% block content %}
 <div class="card">
   <h2>마이페이지</h2>
-  <div class="vuln-info">
-    <b>[취약점 5] IDOR (Insecure Direct Object Reference)</b><br>
-    URL의 <code>user_id</code> 파라미터를 1, 2, 3, 4로 바꿔보세요<br>
-    서버는 요청자 본인 여부를 검증하지 않습니다
+
+  <div class="hint-box" id="hint-idor">
+    <button class="hint-btn" onclick="useHint('idor')">💡 힌트</button>
+    <div class="hint-content hidden" id="hint-content-idor">
+      <p><b>기본 페이로드:</b> <code>?user_id=1</code></p>
+      <p class="hint-note">이 페이로드는 그대로 동작하지 않습니다. 필터를 분석하고 우회 방법을 찾아보세요.</p>
+    </div>
   </div>
 
   <div class="form-row" style="margin-bottom:1rem">

@@ -5,10 +5,12 @@
   <h2>🚫 접근 거부 (403)</h2>
   <p>현재 역할: <span class="badge badge-user">{{ role }}</span></p>
 
-  <div class="vuln-info">
-    <b>[취약점 6] 권한 상승 도전!</b><br>
-    브라우저 개발자 도구(F12) → Application → Cookies<br>
-    <code>role</code> 쿠키 값을 <code>user</code> → <code>admin</code> 으로 변경 후 새로고침
+  <div class="hint-box" id="hint-cookie">
+    <button class="hint-btn" onclick="useHint('cookie')">💡 힌트</button>
+    <div class="hint-content hidden" id="hint-content-cookie">
+      <p><b>기본 페이로드:</b> <code>role=user</code></p>
+      <p class="hint-note">이 페이로드는 그대로 동작하지 않습니다. 필터를 분석하고 우회 방법을 찾아보세요.</p>
+    </div>
   </div>
 
   <a href="/dashboard" class="btn btn-secondary">← 대시보드로</a>
