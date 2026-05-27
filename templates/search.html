@@ -24,16 +24,39 @@
   {% endif %}
 
   {% if results %}
+    <h3 style="margin-top:1.2rem; font-size:0.95rem; color:#94a3b8">검색 결과</h3>
     <table class="data-table">
-      <thead><tr><th>ID</th><th>Username</th><th>Email</th></tr></thead>
+      <thead>
+        <tr>
+          {% if columns %}
+            {% for col in columns %}<th>{{ col }}</th>{% endfor %}
+          {% else %}
+            <th>ID</th><th>Username</th><th>Col3</th>
+          {% endif %}
+        </tr>
+      </thead>
       <tbody>
         {% for row in results %}
-        <tr><td>{{ row[0] }}</td><td>{{ row[1] }}</td><td>{{ row[2] }}</td></tr>
+        <tr>
+          {% for i in range(row|length) %}
+            <td>{{ row[i] }}</td>
+          {% endfor %}
+        </tr>
         {% endfor %}
       </tbody>
     </table>
   {% elif query and not error %}
     <p class="muted">검색 결과 없음</p>
   {% endif %}
+
+  <h3 style="margin-top:1.5rem; font-size:0.95rem; color:#94a3b8">전체 사용자 목록</h3>
+  <table class="data-table">
+    <thead><tr><th>ID</th><th>Username</th><th>Email</th></tr></thead>
+    <tbody>
+      {% for u in default_users %}
+      <tr><td>{{ u[0] }}</td><td>{{ u[1] }}</td><td>{{ u[2] }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 {% endblock %}

@@ -102,22 +102,32 @@ def dashboard():
 def search():
     query = request.args.get("q", "")
     results = []
+    columns = []
     error = None
+
+    conn = get_db()
+    # 기본 목록: 일반 사용자만 표시
+    default_users = conn.execute(
+        "SELECT id, username, email FROM users WHERE role='user'"
+    ).fetchall()
 
     # 공백만 제거 → /**/로 우회 가능
     filtered = query.replace(" ", "")
 
     if filtered:
         try:
-            conn = get_db()
-            # 취약: 사용자 입력이 SQL에 직접 포함됨
-            sql = f"SELECT id, username, email FROM users WHERE username='{filtered}'"
-            results = conn.execute(sql).fetchall()
-            conn.close()
+            # ★ role='user' 조건 추가 — SQLi UNION으로 우회 시 admin + password 노출
+            sql = f"SELECT id, username, email FROM users WHERE username='{filtered}' AND role='user'"
+            rows = conn.execute(sql).fetchall()
+            results = rows
+            if rows:
+                columns = list(rows[0].keys())
         except Exception as e:
             error = str(e)
+    conn.close()
 
-    return render_template("search.html", query=query, results=results, error=error)
+    return render_template("search.html", query=query, results=results,
+                           columns=columns, error=error, default_users=default_users)
 
 
 # ── [취약점 3] Command Injection (; & 필터) ──────────────────────────────────
