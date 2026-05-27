@@ -111,7 +111,7 @@ def search():
         "SELECT id, username, email FROM users WHERE role='user'"
     ).fetchall()
 
-    filtered = query  # 필터 없음 — ', --, /**/ 등 다양한 방식으로 우회 가능
+    filtered = query.replace(" ", "")  # 공백 제거 — /**/로 우회 가능
 
     if filtered:
         try:
