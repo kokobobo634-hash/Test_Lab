@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}게시글 작성 - VulnLab{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>게시글 작성</h2>
+
+  <form method="POST" action="/writeboard">
+    <div class="form-group">
+      <label>제목</label>
+      <input type="text" name="title" placeholder="제목을 입력하세요" required>
+    </div>
+    <div class="form-group">
+      <label>내용</label>
+      <textarea name="content" rows="6" style="width:100%; background:#12151f; border:1px solid #2d3148; border-radius:8px; color:#e2e8f0; padding:0.6rem 0.9rem; font-size:0.9rem; resize:vertical; outline:none;" placeholder="내용을 입력하세요" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">등록</button>
+    <a href="/readboard" class="btn btn-secondary" style="margin-left:0.5rem">취소</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}게시판 - VulnLab{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>게시판</h2>
+
+  <div class="goal-box"><span class="goal-label">🎯 목표</span>게시글 작성 기능에 접근하여 글을 작성하세요.</div>
+
+  <div class="hint-box" id="hint-board">
+    <button class="hint-btn" onclick="useHint('board')">💡 힌트</button>
+    <div class="hint-content hidden" id="hint-content-board">
+      <p>현재 페이지의 URL을 확인해보세요.</p>
+    </div>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>제목</th>
+        <th>작성자</th>
+        <th>날짜</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for post in posts %}
+      <tr>
+        <td>{{ post['id'] }}</td>
+        <td>{{ post['title'] }}</td>
+        <td>{{ post['author'] }}</td>
+        <td>{{ post['created_at'] }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4" class="muted" style="text-align:center; padding:1rem">게시글이 없습니다.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

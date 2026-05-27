@@ -243,3 +243,17 @@ input:focus { border-color: #7c83f5; }
   font-size: 0.85rem;
 }
 .nav-logout:hover { background: #f87171; color: #000 !important; }
+
+/* ── Goal box ── */
+.goal-box {
+  background: #1a1f35;
+  border-left: 3px solid #60a5fa;
+  padding: 0.65rem 1rem;
+  border-radius: 0 4px 4px 0;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.goal-label { font-weight: bold; color: #60a5fa; white-space: nowrap; }

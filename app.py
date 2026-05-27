@@ -56,6 +56,18 @@ def init_db():
             (1,'FLAG','FLAG{sql_inj3ction_1s_d4ng3r0us}'),
             (2,'DB_PASS','s3cr3t_db_p4ssw0rd'),
             (3,'API_KEY','api-key-abc123xyz');
+
+        CREATE TABLE IF NOT EXISTS posts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT,
+            content TEXT,
+            author TEXT,
+            created_at TEXT DEFAULT (datetime('now','localtime'))
+        );
+        INSERT OR IGNORE INTO posts (id,title,content,author) VALUES
+            (1,'서버 점검 안내','2026-06-01 00:00 ~ 06:00 정기 점검 예정입니다.','관리자'),
+            (2,'보안 정책 업데이트','패스워드 정책이 변경되었습니다. 8자 이상, 특수문자 포함 필수.','관리자'),
+            (3,'신규 기능 안내','파일 업로드 기능이 추가되었습니다. 허용 확장자: jpg, png, pdf','관리자');
     """)
     conn.commit()
     conn.close()
@@ -93,16 +105,6 @@ def api_login():
     conn.close()
 
     if user:
-        # admin_PB 계정만 응답에 role + 더미 필드 포함 (쿠키 조작 챌린지용 힌트)
-        if user["username"] == "admin_PB":
-            return jsonify({
-                "status": "success",
-                "user_id": user["id"],
-                "username": user["username"],
-                "role": "admin",
-                "session_token": "eyJhbGciOiJub25lIn0.eyJ1c2VyIjoiYWRtaW5fUEIifQ.",
-                "permissions": ["read", "write", "admin"]
-            })
         return jsonify({"status": "success", "user_id": user["id"], "username": user["username"]})
     return jsonify({"status": "fail", "message": "아이디 또는 비밀번호가 틀렸습니다."})
 
@@ -239,7 +241,35 @@ def mypage():
     return render_template("mypage.html", user=user, user_id=str(user_id), my_id=my_id)
 
 
-# ── [취약점 6] 권한 상승 (쿠키 조작) ─────────────────────────────────────────
+# ── [취약점 6] 게시판 접근제어 (URL 기반 접근 제어) ──────────────────────────
+@app.route("/readboard")
+def readboard():
+    conn = get_db()
+    posts = conn.execute("SELECT * FROM posts ORDER BY id DESC").fetchall()
+    conn.close()
+    return render_template("readboard.html", posts=posts)
+
+@app.route("/writeboard", methods=["GET", "POST"])
+def writeboard():
+    # ★ 서버에서 권한 확인 없이 URL로만 접근 제어 — readboard → writeboard 로 변경하면 접근 가능
+    conn = get_db()
+    message = None
+    if request.method == "POST":
+        title = request.form.get("title", "").strip()
+        content = request.form.get("content", "").strip()
+        if title and content:
+            conn.execute("INSERT INTO posts (title,content,author) VALUES (?,?,?)",
+                         (title, content, request.cookies.get("username", "익명")))
+            conn.commit()
+            message = "success"
+    posts = conn.execute("SELECT * FROM posts ORDER BY id DESC").fetchall()
+    conn.close()
+    if message == "success":
+        return redirect(url_for("readboard"))
+    return render_template("writeboard.html")
+
+
+# ── [취약점 7] 권한 상승 (쿠키 조작) ─────────────────────────────────────────
 @app.route("/admin")
 def admin():
     # role 쿠키를 서버 세션 없이 그대로 신뢰
@@ -260,11 +290,15 @@ def solutions():
 
 @app.route("/set_cookie")
 def set_cookie():
-    """로그인 후 쿠키 설정 (role=user 로 고정)"""
     username = request.args.get("username", "guest")
     resp = make_response(redirect(url_for("dashboard")))
     resp.set_cookie("username", username)
-    resp.set_cookie("role", "user")   # ★ 브라우저에서 admin 으로 바꾸면 관리자 접근
+    # admin_PB는 role=admin 직접 부여
+    conn = get_db()
+    user = conn.execute("SELECT role FROM users WHERE username=?", (username,)).fetchone()
+    conn.close()
+    role = user["role"] if user else "user"
+    resp.set_cookie("role", role)
     return resp
 
 
