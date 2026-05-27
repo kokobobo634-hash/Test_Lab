@@ -4,11 +4,16 @@
 <div class="card">
   <h2>파일 업로드</h2>
 
+  <p class="muted" style="margin-bottom:1rem; font-size:0.9rem">
+    서버는 위험한 확장자(<code>php, jsp, asp, sh, py</code> 등)의 업로드를 차단합니다.<br>
+    <b>웹쉘 파일(.php)을 업로드하는 데 성공하세요.</b>
+  </p>
+
   <div class="hint-box" id="hint-upload">
     <button class="hint-btn" onclick="useHint('upload')">💡 힌트</button>
     <div class="hint-content hidden" id="hint-content-upload">
-      <p><b>기본 페이로드:</b> <code>webshell.php</code></p>
-      <p class="hint-note">이 페이로드는 그대로 동작하지 않습니다. 필터를 분석하고 우회 방법을 찾아보세요.</p>
+      <p><b>차단 목록:</b> <code>php jsp asp aspx sh py rb pl</code></p>
+      <p class="hint-note" style="margin-top:0.4rem">서버가 확장자를 어떤 방식으로 비교하는지 생각해보세요.</p>
     </div>
   </div>
 
