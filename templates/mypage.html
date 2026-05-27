@@ -2,25 +2,20 @@
 {% block title %}마이페이지 - VulnLab{% endblock %}
 {% block content %}
 <div class="card">
-  <h2>마이페이지</h2>
+  <h2>내 정보</h2>
 
   <div class="hint-box" id="hint-idor">
     <button class="hint-btn" onclick="useHint('idor')">💡 힌트</button>
     <div class="hint-content hidden" id="hint-content-idor">
       <p><b>기본 페이로드:</b> <code>?user_id=1</code></p>
-      <p class="hint-note">이 페이로드는 그대로 동작하지 않습니다. 필터를 분석하고 우회 방법을 찾아보세요.</p>
+      <p class="hint-note">이 페이지는 본인 정보만 보여줘야 합니다. URL 파라미터를 분석해보세요.</p>
     </div>
   </div>
 
-  <div class="form-row" style="margin-bottom:1rem">
-    {% for uid in [1,2,3,4] %}
-      <a href="/mypage?user_id={{ uid }}" class="btn {% if user_id|string == uid|string %}btn-primary{% else %}btn-secondary{% endif %}">
-        user_id={{ uid }}
-      </a>
-    {% endfor %}
-  </div>
-
   {% if user %}
+    {% if user_id != my_id %}
+    <div class="msg error" style="margin-bottom:1rem">⚠️ 현재 다른 사용자의 정보를 보고 있습니다 (user_id={{ user_id }})</div>
+    {% endif %}
     <table class="data-table">
       <tr><th>ID</th><td>{{ user['id'] }}</td></tr>
       <tr><th>Username</th><td>{{ user['username'] }}</td></tr>

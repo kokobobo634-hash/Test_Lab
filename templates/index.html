@@ -3,7 +3,6 @@
 {% block content %}
 <div class="card center-card">
   <h2>로그인</h2>
-  <p class="hint">💡 <b>[취약점 1]</b> 응답 패킷의 <code>status</code> 값을 <code>success</code>로 변조하면 인증 우회 가능</p>
 
   <form id="loginForm">
     <div class="form-group">
@@ -19,8 +18,11 @@
   <div id="loginMsg" class="msg"></div>
 
   <div class="info-box">
-    <b>테스트 계정</b><br>
-    alice / alice_pw! &nbsp;|&nbsp; bob / bob_pw! &nbsp;|&nbsp; carol / carol_pw!
+    <b>제공 계정</b><br>
+    <span style="font-size:0.9rem; color:#94a3b8">
+      alice &nbsp;/&nbsp; alice_pw!<br>
+      bob &nbsp;(비밀번호는 직접 찾아보세요)
+    </span>
   </div>
 </div>
 
@@ -38,7 +40,6 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
   });
   const data = await res.json();
 
-  // ★ 클라이언트가 status 값만 믿고 인증 처리
   if (data.status === 'success') {
     msg.className = 'msg success';
     msg.textContent = `✅ 로그인 성공 (${data.username})`;

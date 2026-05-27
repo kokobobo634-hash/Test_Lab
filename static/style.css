@@ -234,3 +234,12 @@ input:focus { border-color: #7c83f5; }
 }
 .hint-status-item.not-used { background: #052e16; border: 1px solid #166534; color: #86efac; }
 .hint-status-item.used     { background: #3a2700; border: 1px solid #92400e; color: #fcd34d; }
+
+.nav-logout {
+  color: #f87171 !important;
+  border: 1px solid #f87171;
+  border-radius: 4px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.85rem;
+}
+.nav-logout:hover { background: #f87171; color: #000 !important; }

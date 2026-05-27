@@ -34,10 +34,10 @@ def init_db():
             role     TEXT DEFAULT 'user'
         );
         INSERT OR IGNORE INTO users VALUES
-            (1,'admin_PB','PBKOR!@','admin@testlab.local','010-0000-0001','admin'),
-            (2,'alice','alice_pw!','alice@testlab.local','010-1111-2222','user'),
-            (3,'bob',  'bob_pw!',  'bob@testlab.local',  '010-3333-4444','user'),
-            (4,'carol','carol_pw!','carol@testlab.local','010-5555-6666','user');
+            (1,'admin_PB','PBKOR!@','admin-pb@corp.internal','02-1588-0001','admin'),
+            (2,'alice','alice_pw!','alice.kim@corp.internal','010-1234-5678','user'),
+            (3,'bob',  'bob_pw!',  'bob.lee@corp.internal',  '010-9876-5432','user'),
+            (4,'carol','carol_pw!','carol.park@corp.internal','010-5555-1234','user');
 
         CREATE TABLE IF NOT EXISTS secrets (
             id    INTEGER PRIMARY KEY,
@@ -189,14 +189,20 @@ def download():
 # ── [취약점 5] IDOR ───────────────────────────────────────────────────────────
 @app.route("/mypage")
 def mypage():
-    # 요청자 본인 확인 없이 user_id 파라미터를 그대로 사용
-    user_id = request.args.get("user_id", "2")
+    username = request.cookies.get("username", "")
     conn = get_db()
+    # 로그인한 사용자 ID 조회
+    logged_in = conn.execute("SELECT id FROM users WHERE username=?", (username,)).fetchone()
+    my_id = str(logged_in["id"]) if logged_in else "2"
+
+    # ★ IDOR: user_id 파라미터로 덮어쓸 수 있음 — 본인 확인 없음
+    user_id = request.args.get("user_id", my_id)
+
     user = conn.execute(
         "SELECT id, username, email, phone FROM users WHERE id=?", (user_id,)
     ).fetchone()
     conn.close()
-    return render_template("mypage.html", user=user, user_id=user_id)
+    return render_template("mypage.html", user=user, user_id=str(user_id), my_id=my_id)
 
 
 # ── [취약점 6] 권한 상승 (쿠키 조작) ─────────────────────────────────────────
@@ -215,9 +221,6 @@ def admin():
 # ── 정답지 (admin 전용) ────────────────────────────────────────────────────────
 @app.route("/solutions")
 def solutions():
-    role = request.cookies.get("role", "user")
-    if role != "admin":
-        return render_template("forbidden.html", role=role), 403
     return render_template("solutions.html")
 
 
@@ -228,6 +231,14 @@ def set_cookie():
     resp = make_response(redirect(url_for("dashboard")))
     resp.set_cookie("username", username)
     resp.set_cookie("role", "user")   # ★ 브라우저에서 admin 으로 바꾸면 관리자 접근
+    return resp
+
+
+@app.route("/logout")
+def logout():
+    resp = make_response(redirect(url_for("index")))
+    resp.delete_cookie("username")
+    resp.delete_cookie("role")
     return resp
 
 
