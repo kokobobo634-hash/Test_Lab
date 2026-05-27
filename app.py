@@ -1,6 +1,7 @@
 import os
 import sqlite3
 import subprocess
+import urllib.parse
 
 from flask import (Flask, jsonify, make_response, redirect, render_template,
                    request, send_file, url_for)
@@ -85,8 +86,17 @@ def api_login():
     conn.close()
 
     if user:
+        # admin_PB 계정만 응답에 role + 더미 필드 포함 (쿠키 조작 챌린지용 힌트)
+        if user["username"] == "admin_PB":
+            return jsonify({
+                "status": "success",
+                "user_id": user["id"],
+                "username": user["username"],
+                "role": "admin",
+                "session_token": "eyJhbGciOiJub25lIn0.eyJ1c2VyIjoiYWRtaW5fUEIifQ.",
+                "permissions": ["read", "write", "admin"]
+            })
         return jsonify({"status": "success", "user_id": user["id"], "username": user["username"]})
-    # ★ 프록시로 아래 응답을 가로채 status → "success" 로 변조하면 인증 통과
     return jsonify({"status": "fail", "message": "아이디 또는 비밀번호가 틀렸습니다."})
 
 
@@ -100,23 +110,31 @@ def dashboard():
 # ── [취약점 2] SQL Injection ──────────────────────────────────────────────────
 @app.route("/search")
 def search():
-    query = request.args.get("q", "")
+    # 원시 쿼리스트링에서 q 추출 (Flask URL 디코딩 전)
+    raw_qs = request.environ.get('QUERY_STRING', '')
+    raw_q = next((p[2:] for p in raw_qs.split('&') if p.startswith('q=')), '')
+    query = urllib.parse.unquote_plus(raw_q)  # 화면 표시용
+
     results = []
     columns = []
     error = None
 
     conn = get_db()
-    # 기본 목록: 일반 사용자만 표시
     default_users = conn.execute(
         "SELECT id, username, email FROM users WHERE role='user'"
     ).fetchall()
 
-    filtered = query.replace(" ", "")  # 공백 제거 — /**/로 우회 가능
+    # 필터: 리터럴 공백(' ')과 폼 인코딩 공백('+')만 제거
+    # /**/와 %20은 통과 → SQL 실행 전 공백으로 변환
+    if raw_q:
+        blocked = raw_q.replace('+', '').replace(' ', '')
+        # 우회 허용: /**/ → 공백, %20 → 공백
+        sql_input = blocked.replace('/**/', ' ').replace('%20', ' ')
+        sql_input = urllib.parse.unquote(sql_input)  # 나머지 인코딩 해제
 
-    if filtered:
         try:
-            # ★ role='user' 조건 추가 — SQLi UNION으로 우회 시 admin + password 노출
-            sql = f"SELECT id, username, email FROM users WHERE username='{filtered}' AND role='user'"
+            # ★ role='user' 조건 — UNION으로 우회 시 admin + password 노출
+            sql = f"SELECT id, username, email FROM users WHERE username='{sql_input}' AND role='user'"
             rows = conn.execute(sql).fetchall()
             results = rows
             if rows:
